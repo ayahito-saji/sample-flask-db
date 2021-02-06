@@ -22,37 +22,64 @@ db.create_all()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', db_uri=db_uri)
 
 @app.route('/entries')
 def entries_index():
     entries = Entry.query.all()
     return render_template('entry/index.html', entries=entries)
 
-@app.route('/entries/new')
+@app.route('/entries/new', methods=["GET", "POST"])
 def entries_new():
-    return render_template('entry/new.html')
+    if request.method == "GET":
+        return render_template('entry/new.html')
+    elif request.method == "POST":
+        title = request.form["title"]
+        body = request.form["body"]
 
-@app.route('/entries/create', methods=["POST"])
-def entries_create():
-    title = request.form["title"]
-    body = request.form["body"]
+        print("title: " + title)
+        print("body: " + body)
 
-    print("title: " + title)
-    print("body: " + body)
+        entry = Entry()
+        entry.title = title
+        entry.body = body
+        db.session.add(entry)
+        db.session.commit()
 
-    entry = Entry()
-    entry.title = title
-    entry.body = body
-    db.session.add(entry)
-    db.session.commit()
-
-    return redirect("/entries")
+        return redirect("/entries/"+str(entry.id))
 
 @app.route('/entries/<id>')
 def entries_show(id):
     entry = Entry.query.get(id)
     return render_template('entry/show.html', entry=entry)
+
+@app.route('/entries/<id>/edit', methods=["GET", "POST"])
+def entries_edit(id):
+    entry = Entry.query.get(id)
+    if request.method == "GET":
+        return render_template('entry/edit.html', entry=entry)
+    elif request.method == "POST":
+        title = request.form["title"]
+        body = request.form["body"]
+
+        print("title: " + title)
+        print("body: " + body)
+
+        entry.title = title
+        entry.body = body
+        db.session.add(entry)
+        db.session.commit()
+
+        return redirect("/entries/"+str(entry.id))
+
+@app.route('/entries/<id>/delete', methods=["POST"])
+def entries_delete(id):
+    if request.form['_method'] == 'DELETE':
+        entry = Entry.query.get(id)
+        db.session.delete(entry)
+        db.session.commit()
+        return redirect("/entries")
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
