@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <title>new entry page</title>
+    </head>
+    <body>
+        <h1>エントリーの作成</h1>
+        <a href="/entries">一覧へ</a>
+        <form method="post" action="/entries/create">
+            <div>タイトル: <input type="text" name="title"></div>
+            <div>
+                本文:<br/>
+                <textarea name="body"></textarea>
+            </div>
+            <input type="submit" value="送信">
+        </form>
+    </body>
+</html>

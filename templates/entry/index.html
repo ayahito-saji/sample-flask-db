@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>entry index page</title>
+    </head>
+    <body>
+        <h1>エントリー一覧</h1>
+        <a href="/">トップへ</a>
+        <a href="/entries/new">新しいエントリの作成</a>
+        <table>
+            <tr>
+                <th>タイトル</th>
+                <th>本文</th>
+                <th>詳細ページ</th>
+            </tr>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.title }}</td>
+                <td>{{ entry.body }}</td>
+                <th><a href="/entries/{{entry.id}}">詳細ページ</a></th>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
